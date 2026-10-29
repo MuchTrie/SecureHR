@@ -1,0 +1,982 @@
+Anda adalah senior software architect dan technical writer.
+
+Tugas Anda adalah menganalisis seluruh codebase aplikasi ini dan membuat atau
+memperbarui file dokumentasi `APPLICATION_CONTEXT.md` pada setiap aplikasi
+yang memiliki context terpisah:
+
+- `backend/APPLICATION_CONTEXT.md`
+- `frontend/APPLICATION_CONTEXT.md`
+
+Setiap file menjadi **single source of truth** untuk memahami boundary
+aplikasinya masing-masing, baik oleh developer baru, software engineer, AI
+coding agent, QA, maupun stakeholder teknis. Jika perubahan menyentuh
+frontend dan backend, perbarui kedua file dengan informasi yang relevan dan
+konsisten.
+
+## Tujuan
+
+Jangan membuat dokumentasi berdasarkan asumsi atau template generik.
+
+Sebelum menulis dokumentasi, lakukan analisis terhadap repository secara
+menyeluruh. Gunakan source code, konfigurasi, database schema/migration, API
+routes, models/entities, services, tests, deployment configuration, dan
+dokumentasi yang sudah tersedia sebagai sumber utama.
+
+Jika repository memiliki beberapa aplikasi, analisis setiap aplikasi sebagai
+boundary terpisah. Untuk repository ini:
+
+```text
+backend/  -> aplikasi Go, Gin, GORM, dan database
+frontend/ -> aplikasi React, TypeScript, Vite, dan API client
+```
+
+Jangan menganggap frontend memiliki akses langsung ke database. Catat
+integrasi antara frontend dan backend secara konsisten pada kedua context.
+
+Jika terdapat informasi yang tidak dapat dipastikan dari codebase, tandai secara eksplisit sebagai:
+
+`[UNKNOWN]`
+
+Jangan mengarang informasi.
+
+Jika terdapat dokumentasi lama yang bertentangan dengan implementasi aktual, prioritaskan **implementasi aktual di codebase**, lalu catat discrepancy tersebut di bagian `Known Inconsistencies`.
+
+---
+
+# 1. Repository Discovery
+
+Sebelum membuat atau memperbarui file, identifikasi terlebih dahulu:
+
+- Struktur repository
+- Aplikasi yang terdapat di dalam repository
+- Entry point setiap aplikasi
+- Framework yang digunakan
+- Bahasa pemrograman
+- Package manager
+- Build system
+- Application modules
+- Database
+- External services
+- Infrastructure
+- Deployment mechanism
+- Test framework
+- Configuration files
+- Environment files/template
+- CI/CD configuration
+- Existing documentation
+
+Untuk backend, periksa minimal:
+
+- `backend/cmd/server/main.go`
+- `backend/internal/server/`
+- `backend/internal/database/`
+- `backend/internal/config/`
+- `backend/internal/middleware/`
+- `backend/internal/model/`
+- `backend/internal/seeder/`
+- `backend/migrations/`
+
+Untuk frontend, periksa minimal:
+
+- `frontend/src/main.tsx`
+- `frontend/src/app/`
+- `frontend/src/features/`
+- `frontend/src/components/`
+- `frontend/src/lib/`
+- `frontend/src/types/`
+- `frontend/package.json`
+
+Perhatikan terutama file seperti:
+
+- README
+- package.json / requirements.txt / go.mod / pom.xml / Cargo.toml dan sejenisnya
+- Dockerfile
+- docker-compose
+- CI/CD configuration
+- database schema
+- migrations
+- ORM models
+- API routes
+- controllers
+- services
+- repositories
+- configuration
+- tests
+- infrastructure configuration
+
+Jangan berhenti setelah membaca README. README hanya salah satu sumber informasi.
+
+---
+
+# 2. Buat atau perbarui APPLICATION_CONTEXT.md
+
+Buat atau perbarui file context pada boundary aplikasi yang relevan. Untuk
+repository ini, gunakan:
+
+```text
+backend/APPLICATION_CONTEXT.md
+frontend/APPLICATION_CONTEXT.md
+```
+
+Informasi yang hanya dimiliki backend, seperti model database, migration,
+seeder, dan middleware server, dicatat di context backend. Informasi yang
+hanya dimiliki frontend, seperti komponen React, route SPA, API wrapper, dan
+state UI, dicatat di context frontend. Informasi integrasi antar aplikasi
+harus konsisten di kedua file.
+
+Gunakan struktur berikut pada masing-masing file.
+
+## 1. Application Overview
+
+Jelaskan:
+
+- Nama aplikasi
+- Tujuan aplikasi
+- Problem yang diselesaikan
+- Target users
+- High-level capabilities
+- Current application status jika dapat diketahui
+- Repository structure secara high-level
+
+Jelaskan aplikasi dalam beberapa paragraf yang memungkinkan developer baru memahami sistem tanpa membaca source code terlebih dahulu.
+
+---
+
+## 2. Business Context
+
+Dokumentasikan:
+
+- Business problem
+- Business objective
+- Business process utama
+- Aktor yang terlibat
+- Use case utama
+- Business terminology
+- Business constraints
+
+Pisahkan antara fakta yang ditemukan dari codebase dan asumsi.
+
+---
+
+## 3. Users, Roles & Actors
+
+Identifikasi seluruh actor/user type.
+
+Untuk setiap role jelaskan:
+
+- Nama role
+- Tujuan
+- Permission
+- Resource yang dapat diakses
+- Action yang dapat dilakukan
+- Constraint
+
+Contoh:
+
+```text
+Admin
+- Manage users
+- Manage configuration
+- View all transactions
+
+User
+- View own profile
+- Create transaction
+- View own transactions
+```
+
+Jangan mengarang role yang tidak ditemukan.
+
+---
+
+## 4. Functional Modules
+
+Identifikasi seluruh module/feature utama aplikasi.
+
+Untuk setiap module jelaskan:
+
+```text
+Module:
+Purpose:
+Main actors:
+Main entities:
+Main APIs:
+Main services:
+Dependencies:
+Important business rules:
+```
+
+Prioritaskan module berdasarkan tingkat kepentingannya terhadap sistem.
+
+---
+
+## 5. End-to-End Workflows
+
+Dokumentasikan workflow paling penting dari awal sampai akhir.
+
+Contoh:
+
+```text
+User
+ ↓
+Frontend
+ ↓
+API
+ ↓
+Authentication
+ ↓
+Controller
+ ↓
+Service
+ ↓
+Repository
+ ↓
+Database
+ ↓
+External Service
+```
+
+Untuk setiap workflow jelaskan:
+
+- Trigger
+- Input
+- Processing
+- Validation
+- Business logic
+- Database operation
+- External integration
+- Output
+- Error handling
+- Side effects
+
+Identifikasi minimal workflow utama yang ditemukan di codebase.
+
+---
+
+## 6. System Architecture
+
+Buat penjelasan arsitektur sistem secara high-level.
+
+Dokumentasikan:
+
+- Frontend
+- Backend
+- API
+- Database
+- Cache
+- Queue
+- Object storage
+- Background worker
+- External services
+- Authentication provider
+- Infrastructure
+
+Jika memungkinkan, sertakan diagram Mermaid.
+
+Contoh:
+
+```mermaid
+flowchart TD
+    User --> Frontend
+    Frontend --> API
+    API --> Application
+    Application --> Database
+    Application --> ExternalService
+```
+
+Diagram harus berdasarkan arsitektur aktual, bukan asumsi.
+
+---
+
+## 7. Technology Stack
+
+Dokumentasikan:
+
+| Layer | Technology | Version | Purpose |
+|---|---|---|---|
+| Frontend | ... | ... | ... |
+| Backend | ... | ... | ... |
+| Database | ... | ... | ... |
+| Cache | ... | ... | ... |
+| Infrastructure | ... | ... | ... |
+| Testing | ... | ... | ... |
+
+Jika version tidak dapat dipastikan, gunakan `[UNKNOWN]`.
+
+---
+
+## 8. Repository / Code Structure
+
+Jelaskan struktur folder penting.
+
+Contoh:
+
+```text
+src/
+├── modules/
+├── controllers/
+├── services/
+├── repositories/
+├── entities/
+├── middleware/
+└── config/
+```
+
+Untuk setiap folder penting jelaskan tanggung jawabnya.
+
+Jangan mendokumentasikan setiap file jika repository besar. Fokus pada architectural boundaries dan entry points.
+
+---
+
+## 9. Domain Model
+
+Identifikasi entity/domain object utama.
+
+Untuk setiap entity dokumentasikan:
+
+- Purpose
+- Important fields
+- Relationships
+- Ownership
+- Lifecycle
+- Status
+- Constraints
+
+Jika memungkinkan, buat ERD atau diagram Mermaid berdasarkan schema aktual.
+
+Contoh:
+
+```mermaid
+erDiagram
+    USER ||--o{ ORDER : creates
+    ORDER ||--|{ ORDER_ITEM : contains
+```
+
+Jangan mengarang relationship.
+
+---
+
+## 10. Database
+
+Dokumentasikan:
+
+- Database technology
+- Schema structure
+- Important tables/collections
+- Primary keys
+- Foreign keys
+- Indexes yang penting
+- Constraints
+- Transactions
+- Migration mechanism
+- Seed mechanism
+- Data ownership
+
+Untuk backend repository ini, verifikasi juga mekanisme bootstrap aktual:
+
+- `internal/database/database.go` untuk pembukaan koneksi.
+- `internal/database/bootstrap.go` untuk versioned `AutoMigrate` dan seeder.
+- `currentSchemaVersion` dan `currentSeedVersion`.
+- Tabel kontrol `securehr_bootstrap_state`.
+- Seeder `internal/seeder/seeder.go`.
+- Bedakan migration runtime GORM dari file SQL reference di `migrations/`.
+
+Dokumentasikan kapan migration dan seeder dijalankan, serta kapan keduanya
+dilewati. Jangan menyimpulkan bahwa `AutoMigrate` selalu berjalan pada setiap
+startup tanpa memeriksa bootstrap version.
+
+Identifikasi tabel/entity yang paling penting terhadap business process.
+
+---
+
+## 11. API
+
+Dokumentasikan API yang ditemukan.
+
+Pisahkan API berdasarkan boundary:
+
+- Backend route aktual: `backend/internal/server/routes.go`.
+- Backend handler: `backend/internal/server/handlers.go`.
+- Frontend API wrapper: `frontend/src/lib/api.ts`.
+- Frontend HTTP client dan token refresh: `frontend/src/lib/axios.ts`.
+- Frontend API/domain types: `frontend/src/types/index.ts`.
+
+Pastikan path, method, payload, response envelope, status, dan authorization
+diverifikasi dari implementasi backend, bukan hanya dari pemanggil frontend.
+
+Untuk setiap endpoint penting:
+
+```text
+Method:
+Path:
+Purpose:
+Authentication:
+Authorization:
+Request:
+Response:
+Validation:
+Errors:
+Side effects:
+```
+
+Kelompokkan berdasarkan module.
+
+Jika terdapat OpenAPI/Swagger, gunakan sebagai referensi tetapi verifikasi dengan implementation aktual.
+
+---
+
+## 12. Authentication & Authorization
+
+Dokumentasikan:
+
+- Authentication mechanism
+- Session/JWT/OAuth/etc.
+- Token lifecycle
+- Login flow
+- Refresh mechanism
+- Role system
+- Permission system
+- Middleware/guard
+- Resource-level authorization
+
+Jelaskan security boundary aplikasi.
+
+---
+
+## 13. Business Rules & Invariants
+
+Ini adalah salah satu bagian paling penting.
+
+Identifikasi rule yang **harus selalu benar**.
+
+Contoh:
+
+```text
+- An order cannot be cancelled after shipment.
+- A user can only access their own transaction.
+- Payment must exist before order can become COMPLETED.
+```
+
+Ambil rule dari:
+
+- Service logic
+- Validation
+- Database constraints
+- Tests
+- State transitions
+- Authorization logic
+
+Bedakan:
+
+`Business Rule`
+
+dan
+
+`Technical Constraint`.
+
+---
+
+## 14. Entity Lifecycle & State Machine
+
+Untuk entity yang memiliki status/state, dokumentasikan lifecycle-nya.
+
+Contoh:
+
+```text
+DRAFT
+  ↓
+SUBMITTED
+  ↓
+APPROVED
+  ↓
+COMPLETED
+```
+
+Dokumentasikan:
+
+- Valid transitions
+- Invalid transitions
+- Trigger
+- Actor
+- Side effects
+
+Jika relevan, gunakan Mermaid state diagram.
+
+---
+
+## 15. External Integrations
+
+Identifikasi seluruh external dependency.
+
+Untuk setiap integration:
+
+```text
+Service:
+Purpose:
+Protocol:
+Authentication:
+Inbound/Outbound:
+Data exchanged:
+Failure behavior:
+Retry:
+Timeout:
+Webhook:
+Dependency criticality:
+```
+
+Contoh integration:
+
+- Payment provider
+- Email provider
+- Storage
+- Authentication provider
+- Third-party API
+- Messaging system
+
+---
+
+## 16. Configuration & Environment
+
+Dokumentasikan environment:
+
+- Development
+- Test
+- Staging
+- Production
+
+Identifikasi environment variables/configuration yang digunakan.
+
+Format:
+
+```text
+DATABASE_URL
+Purpose: Database connection
+Required: Yes
+Used by: Database layer
+Example: [REDACTED]
+```
+
+**Jangan pernah menuliskan secret, password, token, private key, credential, atau API key aktual ke dalam dokumentasi.**
+
+Gunakan `[REDACTED]`.
+
+---
+
+## 17. Deployment & Infrastructure
+
+Dokumentasikan:
+
+- Deployment architecture
+- Hosting/cloud provider
+- Containers
+- CI/CD
+- Build process
+- Deployment process
+- Database migration process
+- Scaling
+- Networking
+- Storage
+- Background workers
+- Scheduled jobs
+
+Jika informasi tidak tersedia, gunakan `[UNKNOWN]`.
+
+---
+
+## 18. Observability
+
+Dokumentasikan:
+
+- Application logging
+- Error tracking
+- Monitoring
+- Metrics
+- Health checks
+- Alerting
+- Audit logging
+
+Jelaskan bagaimana engineer dapat mengetahui bahwa sistem mengalami masalah.
+
+---
+
+## 19. Error Handling & Failure Modes
+
+Identifikasi:
+
+- Error handling strategy
+- Error types
+- HTTP error mapping
+- Retry mechanism
+- Timeout
+- Circuit breaker jika ada
+- Dead-letter queue jika ada
+- Graceful degradation
+- Transaction rollback
+
+Dokumentasikan failure scenario penting.
+
+---
+
+## 20. Security
+
+Dokumentasikan security architecture secara high-level.
+
+Perhatikan:
+
+- Authentication
+- Authorization
+- Sensitive data
+- Encryption
+- Secrets
+- Input validation
+- Rate limiting
+- CORS
+- CSRF
+- SQL injection protection
+- XSS protection
+- Audit trail
+- Data access boundaries
+
+Jangan membuat security claim yang tidak dapat dibuktikan dari codebase.
+
+---
+
+## 21. Testing Strategy
+
+Dokumentasikan:
+
+- Unit tests
+- Integration tests
+- E2E tests
+- Test framework
+- Test structure
+- Critical test scenarios
+- Test commands
+- Fixtures/seeds
+- Mocking strategy
+
+Identifikasi area yang memiliki coverage tinggi dan area kritis yang tampaknya belum memiliki test.
+
+Jangan mengklaim coverage percentage kecuali memang dapat diverifikasi.
+
+---
+
+## 22. Development Setup
+
+Buat panduan developer baru untuk menjalankan aplikasi secara lokal.
+
+Jika repository memiliki backend dan frontend terpisah, dokumentasikan setup
+dan validasi masing-masing aplikasi. Untuk repository ini, verifikasi command
+PowerShell yang tersedia:
+
+```powershell
+# Backend
+Set-Location .\backend
+go test ./...
+go run .\cmd\server
+
+# Frontend
+Set-Location ..\frontend
+npm run build
+npm run lint
+npm run dev
+```
+
+Jangan menulis command migration atau seed manual jika runtime menggunakan
+versioned bootstrap; dokumentasikan cara kerja `internal/database/bootstrap.go`
+sebagai gantinya.
+
+Minimal:
+
+```text
+Prerequisites
+Installation
+Environment setup
+Database setup
+Migration
+Seed
+Run application
+Run tests
+Build
+Lint
+Format
+```
+
+Gunakan command yang benar-benar ditemukan di repository.
+
+Jangan membuat command berdasarkan asumsi.
+
+---
+
+## 23. Important Files & Entry Points
+
+Identifikasi file yang paling penting untuk memahami sistem.
+
+Format:
+
+```text
+File:
+Purpose:
+Why it matters:
+```
+
+Contoh:
+
+```text
+src/main.ts
+Purpose: Application entry point
+Why it matters: Initializes application and dependencies
+```
+
+Prioritaskan file yang harus dibaca developer/AI agent ketika pertama kali memahami sistem.
+
+---
+
+## 24. Architecture Decisions
+
+Identifikasi architectural decisions penting yang dapat disimpulkan dari codebase.
+
+Untuk setiap decision:
+
+```text
+Decision:
+Context:
+Reason:
+Trade-off:
+Alternative:
+Evidence:
+```
+
+Jangan mengklaim alasan historis jika tidak ditemukan dokumentasinya.
+
+Jika alasan tidak diketahui:
+
+`Reason: [UNKNOWN]`
+
+---
+
+## 25. Known Issues & Technical Debt
+
+Identifikasi:
+
+- TODO
+- FIXME
+- Deprecated code
+- Temporary workaround
+- Architectural smell
+- Duplicated logic
+- Missing tests
+- Known limitations
+- Hardcoded configuration
+- Risky dependencies
+
+Jangan mengubah code. Hanya dokumentasikan temuan.
+
+---
+
+## 26. Known Inconsistencies
+
+Bandingkan:
+
+- README
+- Documentation
+- Configuration
+- Tests
+- Actual implementation
+
+Jika terdapat ketidaksesuaian, dokumentasikan:
+
+```text
+Expected:
+Actual:
+Source:
+Impact:
+```
+
+---
+
+## 27. AI Coding Agent Context
+
+Buat section khusus untuk AI coding agent.
+
+Isi dengan hal-hal yang harus diketahui AI sebelum melakukan perubahan code:
+
+### Architectural Rules
+
+Aturan architecture yang harus dipatuhi.
+
+### Coding Conventions
+
+Convention yang benar-benar digunakan repository.
+
+### Dependency Rules
+
+Module mana yang boleh/tidak boleh bergantung pada module lain.
+
+### Important Invariants
+
+Business rule yang tidak boleh dilanggar.
+
+### Dangerous Areas
+
+Area code yang memiliki risiko tinggi jika diubah.
+
+### Generated Code
+
+Identifikasi code yang dihasilkan secara otomatis dan sebaiknya tidak diedit manual.
+
+### Do Not Modify
+
+Identifikasi file/folder yang tidak boleh diedit secara langsung jika memang ada.
+
+### Required Checks Before Commit
+
+Command test/lint/typecheck/build yang harus dijalankan setelah perubahan.
+
+---
+
+## 28. Quick Start for AI Agents
+
+Tambahkan bagian singkat yang menjawab:
+
+> "Jika AI agent baru pertama kali masuk ke repository ini, apa saja yang harus dibaca terlebih dahulu?"
+
+Buat urutan eksplorasi seperti:
+
+```text
+1. Tentukan apakah task menyentuh backend, frontend, atau keduanya.
+2. Read `backend/APPLICATION_CONTEXT.md` untuk task backend.
+3. Read `frontend/APPLICATION_CONTEXT.md` untuk task frontend.
+4. Read `backend/README.md` dan `frontend/README.md` jika task menyentuh setup.
+5. Inspect source, route, model, API wrapper, dan konfigurasi yang relevan.
+6. Understand boundary antara frontend API client dan backend API.
+7. Before modifying, periksa dependency, migration/bootstrap, dan test command.
+```
+
+Berikan prioritas pada file/module yang paling relevan.
+
+---
+
+## 29. Glossary
+
+Buat glossary untuk istilah domain yang digunakan aplikasi.
+
+Format:
+
+```text
+Term:
+Definition:
+```
+
+Jangan mendefinisikan istilah berdasarkan asumsi.
+
+---
+
+# Dokumentation Rules
+
+Ikuti aturan berikut:
+
+1. Jangan mengarang informasi.
+2. Jangan memasukkan secret atau credential.
+3. Bedakan fakta, inference, dan unknown.
+4. Jika informasi tidak ditemukan, tulis `[UNKNOWN]`.
+5. Gunakan implementation aktual sebagai source of truth.
+6. Jangan mengubah source code hanya untuk membuat dokumentasi.
+7. Jangan membuat diagram yang tidak sesuai dengan implementation.
+8. Jangan menyalin source code dalam jumlah besar.
+9. Fokus pada informasi yang membantu manusia dan AI memahami sistem.
+10. Hindari dokumentasi yang terlalu verbose terhadap detail implementation yang tidak penting.
+11. Gunakan bahasa yang jelas dan teknis.
+12. Gunakan Markdown.
+13. Gunakan Mermaid jika diagram dapat memperjelas architecture, workflow, ERD, atau state machine.
+14. Semua command yang ditulis harus diverifikasi dari repository.
+15. Jangan mencantumkan credential aktual meskipun ditemukan di repository.
+16. Jangan menghapus atau mengubah dokumentasi existing.
+17. Hanya buat atau update `APPLICATION_CONTEXT.md` yang relevan pada
+    `backend/` dan/atau `frontend/`. Jangan mengubah source code atau file lain.
+
+# Proses Kerja
+
+Ikuti proses berikut secara berurutan:
+
+### Step 1 — Explore
+
+Scan repository dan identifikasi architecture, modules, dependencies, database, API, integrations, configuration, tests, dan deployment.
+
+Jika terdapat lebih dari satu aplikasi, buat catatan terpisah untuk backend dan
+frontend. Identifikasi juga boundary komunikasi API di antara keduanya.
+
+### Step 2 — Verify
+
+Cross-check informasi antara source code, configuration, tests, schema, dan existing documentation.
+
+### Step 3 — Map
+
+Buat mental model:
+
+```text
+Users
+ ↓
+Features
+ ↓
+Modules
+ ↓
+Services
+ ↓
+Data
+ ↓
+Infrastructure
+ ↓
+External Dependencies
+```
+
+### Step 4 — Document
+
+Buat atau perbarui `backend/APPLICATION_CONTEXT.md` dan/atau
+`frontend/APPLICATION_CONTEXT.md` berdasarkan hasil analisis. Update hanya
+context yang terkena perubahan, tetapi perbarui keduanya jika kontrak
+integrasi berubah.
+
+### Step 5 — Self Review
+
+Setelah file selesai, review kembali dan pastikan:
+
+- Tidak ada informasi yang diada-adakan.
+- Tidak ada secret.
+- Tidak ada architectural claim tanpa evidence.
+- Semua module utama tercakup.
+- Business rules penting tercakup.
+- Critical workflows tercakup.
+- Database/domain model tercakup.
+- API/integration penting tercakup.
+- Developer setup dapat diikuti.
+- AI agent dapat memahami batasan architecture.
+- `[UNKNOWN]` digunakan jika informasi memang tidak dapat diverifikasi.
+
+### Step 6 — Final Report
+
+Setelah selesai, berikan ringkasan singkat:
+
+```text
+Created or updated:
+backend/APPLICATION_CONTEXT.md
+frontend/APPLICATION_CONTEXT.md
+
+Repository analyzed:
+...
+
+Main modules identified:
+...
+
+Main integrations identified:
+...
+
+Important unknowns:
+...
+
+Potential documentation gaps:
+...
+```
+
+Jangan mengubah source code atau file lain selain `APPLICATION_CONTEXT.md` yang
+relevan pada boundary aplikasi tersebut.

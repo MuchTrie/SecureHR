@@ -1,0 +1,6 @@
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/MuchTrie/FE_HR_Management-System.git
+[submodule "backend"]
+	path = backend
+	url = https://github.com/MuchTrie/BE_HR_Management-System.git
